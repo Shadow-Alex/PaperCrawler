@@ -82,12 +82,23 @@ if __name__ == '__main__':
         random_mouse_walk(actions)
         actions.move_to_element(element)
 
+    def check_for_bot(driver):
+        # Check if there is a human check in the page!
+        try:
+            driver.find_element(By.ID, "recaptcha")
+            return True
+        except:
+            return False
+
+    def fuck_reCAPTCHA():
+        input("请完成人机身份验证，验证后请输入任何字符以继续")
+        return
 
     paper_store = []
-    file_idx = 0
+    file_idx = 13
     total_cnt = 0
 
-    start_year = 1990
+    start_year = 1999
     end_year = 2023
 
     for journal in top_journals[:]:
@@ -96,6 +107,10 @@ if __name__ == '__main__':
         while cur_year <= end_year:
             driver.get("https://scholar.google.com")
             sleep(5)
+
+            if check_for_bot(driver):
+                fuck_reCAPTCHA()
+
             search_box = driver.find_element(By.NAME, "q")
 
             # throw in some random move!
@@ -105,6 +120,9 @@ if __name__ == '__main__':
             sleep(5)
             random_user_action(driver, actions)
 
+            if check_for_bot(driver):
+                fuck_reCAPTCHA()
+
             # exclude citation:
             sidebar = driver.find_element(By.ID, "gs_bdy_sb")
             exclude_citation = sidebar.find_elements(By.CSS_SELECTOR, ".gs_lbl")[2]
@@ -112,6 +130,9 @@ if __name__ == '__main__':
             exclude_citation.click()
             sleep(5)
 
+
+            if check_for_bot(driver):
+                fuck_reCAPTCHA()
 
             # advance search!
             custom_range = driver.find_element(By.ID, "gs_res_sb_yyc")
@@ -130,7 +151,13 @@ if __name__ == '__main__':
             search_btn.click()
             sleep(5)
 
+            if check_for_bot(driver):
+                fuck_reCAPTCHA()
+
             while True:
+                if check_for_bot(driver):
+                    fuck_reCAPTCHA()
+
                 papers = driver.find_elements(By.CSS_SELECTOR, ".gs_r.gs_or.gs_scl")
                 for paper in papers:
                     title = paper.find_element(By.CLASS_NAME, "gs_rt")
@@ -184,15 +211,21 @@ if __name__ == '__main__':
                 # GOTO next. if no next is found. complete!
                 for i in range(3):
                     scroll_down(driver)
-                next = driver.find_element(By.ID, "gs_n")
-                next = next.find_element(By.CSS_SELECTOR, '[align="left"]')
-                son = next.find_element(By.XPATH, './*')
-                if son.get_attribute("href"):
-                    move_to_element(next, driver, actions)
-                    next.click()
-                    sleep(randint(5, 15))
-                else:
-                    # end here!
+
+                sleep(randint(5, 15))
+
+                try:
+                    next = driver.find_element(By.ID, "gs_n")
+                    next = next.find_element(By.CSS_SELECTOR, '[align="left"]')
+                    son = next.find_element(By.XPATH, './*')
+                    if son.get_attribute("href"):
+                        move_to_element(next, driver, actions)
+                        next.click()
+                    else:
+                        # end here!
+                        print("Year " + str(cur_year) + " of " + journal + "is completed.")
+                        break
+                except:
                     print("Year " + str(cur_year) + " of " + journal + "is completed.")
                     break
 
