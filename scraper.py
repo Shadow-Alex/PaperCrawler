@@ -1,3 +1,4 @@
+import os.path
 import random
 
 from selenium import webdriver
@@ -88,23 +89,54 @@ if __name__ == '__main__':
             driver.find_element(By.ID, "recaptcha")
             return True
         except:
-            return False
+            try:
+                driver.find_element(By.CLASS_NAME, "recaptcha-anchor")
+                return True
+            except:
+                return False
 
     def fuck_reCAPTCHA():
         input("请完成人机身份验证，验证后请输入任何字符以继续")
         return
 
     paper_store = []
-    file_idx = 13
+    file_idx = 0
+    while True:
+        if os.path.exists(str(file_idx) + '.pickle'):
+            file_idx += 1
+        else:
+            break
+    print("History db found, start from " + str(file_idx) + '.pickle')
+
     total_cnt = 0
 
-    start_year = 1999
+    start_year = 1990
     end_year = 2023
+
+    with open('log', 'r') as file:
+        output = file.readlines()
+        if len(output) == 2:
+            check_journal = output[0]
+            check_year = int(output[1])
+            finished_journal = True
+        else:
+            finished_journal = False
 
     for journal in top_journals[:]:
         cur_year = start_year
 
+        if (finished_journal == True) and (journal.strip() != check_journal.strip()):
+            continue
+
         while cur_year <= end_year:
+            if (finished_journal == True) and cur_year < check_year:
+                cur_year += 1
+                continue
+            elif (finished_journal == True) and cur_year == check_year:
+                finished_journal = False
+                cur_year += 1
+                continue
+
             driver.get("https://scholar.google.com")
             sleep(5)
 
@@ -165,7 +197,8 @@ if __name__ == '__main__':
 
                     # get citation from third child of "gs_fl"
                     try:
-                        citation = paper.find_element(By.XPATH, '//div[@class="gs_fl"]')
+                        citation = paper.find_element(By.CLASS_NAME, "gs_ri")
+                        citation = citation.find_element(By.CLASS_NAME, "gs_fl")
                         citation = citation.find_elements(By.XPATH, './*')
                         match = re.match("\s*[^0-9]*\s*(\d*)", citation[2].text)
                         citation = eval(match.group(1))
@@ -174,9 +207,10 @@ if __name__ == '__main__':
                         citation = 0
 
                     # get date
-                    date = paper.find_element(By.CLASS_NAME, "gs_a")
-                    match = re.match("[^0-9]*(\d*)[^0-9]*", date.text)
-                    date = eval(match.group(1))
+                    # date = paper.find_element(By.CLASS_NAME, "gs_a")
+                    # match = re.match("[^0-9]*(\d*)[^0-9]*", date.text)
+                    # date = eval(match.group(1))
+                    date = cur_year
 
                     # get url
                     try:
@@ -224,9 +258,21 @@ if __name__ == '__main__':
                     else:
                         # end here!
                         print("Year " + str(cur_year) + " of " + journal + "is completed.")
+                        with open("log", "w") as file:
+                            file.writelines([journal, str(cur_year)])
                         break
                 except:
                     print("Year " + str(cur_year) + " of " + journal + "is completed.")
+                    with open("log", "w") as file:
+                        file.writelines([journal, str(cur_year)])
                     break
 
             cur_year += 1
+
+
+    # flush.
+    with open(str(file_idx) + '.pickle', 'wb') as file:
+        pickle.dump(paper_store, file)
+
+    paper_store = []
+    file_idx += 1
