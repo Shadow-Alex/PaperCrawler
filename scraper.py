@@ -10,6 +10,7 @@ import re
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
+from bs4 import BeautifulSoup
 
 
 if __name__ == '__main__':
@@ -85,15 +86,12 @@ if __name__ == '__main__':
 
     def check_for_bot(driver):
         # Check if there is a human check in the page!
-        try:
-            driver.find_element(By.ID, "recaptcha")
+        html = driver.page_source
+        match = re.search(r'recaptcha', html)
+        if match:
             return True
-        except:
-            try:
-                driver.find_element(By.CLASS_NAME, "recaptcha-anchor")
-                return True
-            except:
-                return False
+        else:
+            return False
 
     def fuck_reCAPTCHA():
         input("请完成人机身份验证，验证后请输入任何字符以继续")
@@ -194,6 +192,12 @@ if __name__ == '__main__':
                 for paper in papers:
                     title = paper.find_element(By.CLASS_NAME, "gs_rt")
                     title = title.text
+                    try:
+                        url2 = paper.find_element(By.CLASS_NAME, "gs_rt")
+                        url2 = url2.find_element(By.CSS_SELECTOR, "a[href]")
+                        url2 = url2.get_attribute("href")
+                    except:
+                        url2 = ''
 
                     # get citation from third child of "gs_fl"
                     try:
@@ -212,20 +216,21 @@ if __name__ == '__main__':
                     # date = eval(match.group(1))
                     date = cur_year
 
-                    # get url
+                    # get url1
                     try:
-                        url = paper.find_element(By.CLASS_NAME, "gs_or_ggsm")
-                        url = url.find_elements(By.XPATH, './*')
-                        url = url[0].get_attribute("href")
+                        url1 = paper.find_element(By.CLASS_NAME, "gs_or_ggsm")
+                        url1 = url1.find_elements(By.XPATH, './*')
+                        url1 = url1[0].get_attribute("href")
                     except:
-                        url = ''
+                        url1 = ''
 
                     paper_store.append({
                         'journal': journal,
                         'title': title,
                         'citation': citation,
                         'date': date,
-                        'url': url,
+                        'url1': url1,
+                        'url2': url2,
                     })
                     total_cnt += 1
 
@@ -240,13 +245,13 @@ if __name__ == '__main__':
                         paper_store = []
                         file_idx += 1
 
-                        sleep(randint(10, 20))
+                        sleep(randint(5, 15))
 
                 # GOTO next. if no next is found. complete!
                 for i in range(3):
                     scroll_down(driver)
 
-                sleep(randint(5, 15))
+                sleep(randint(10, 30))
 
                 try:
                     next = driver.find_element(By.ID, "gs_n")

@@ -160,3 +160,6 @@ cython_debug/
 .idea/
 *.pickle
 log
+/chrome_pdfs/
+/pdfs/
+/download_log

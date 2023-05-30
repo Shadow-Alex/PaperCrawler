@@ -3,21 +3,22 @@
 This projects aims to crawl title and citation from given journals, 
 with few human interaction, then download from url or scihub. 
 
-Google Scholar : With good pacing, the script is able to 
+**Google Scholar`scraper.py`** : With good pacing, the script is able to 
 crawl 1 page in 10 second, and run for at least 100 page until 
 it hit a bot check. This project **don't** solve the bot check
 however stop and wait for human assistance. (Note there are some paid 
 solution for reCAPTCHA) So it's not for you if you want to crawl
 for a data lake.
-
-
 ![img.png](img.png)
 
-Scihub : TBD
+**Scihub`Downloader.py`** :  Try to download the links 
+scrapped from google scholar. If failed, it will fallback to 
+scihub. If failed again, it will fallback to scihub backbones.
+There are lots of sci-hub mirrors, be sure plenty to put accessible
+mirrors in `_get_available_scihub_urls()`. It's recommended to 
+add at least 5 mirrors for load balancing.
+![img_1.png](img_1.png)
 
-### Highlight
-* Mock user behaviour to alleviate bot ban
-  * mock mouse move
-  * mock mouse scroll
-  * mock click
-  * mock input
+**Clash `clash.py`**: Change proxy server before google gets
+irritated. TBD
+
