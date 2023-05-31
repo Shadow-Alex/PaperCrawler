@@ -113,7 +113,7 @@ class SciHub(object):
                         break
                     else:  # still downloading!
                         sleep_limit += 1
-                        sleep_limit = max(sleep_max, sleep_limit)
+                        sleep_limit = min(sleep_max, sleep_limit)
             if direct_succ:
                 return {
                     'direct': True,
@@ -151,7 +151,7 @@ class SciHub(object):
                         break
                     else:  # still downloading!
                         sleep_limit += 1
-                        sleep_limit = max(sleep_max, sleep_limit)
+                        sleep_limit = min(sleep_max, sleep_limit)
 
             if sci_succ:
                 return {
@@ -190,7 +190,7 @@ class SciHub(object):
                         break
                     else:  # still downloading!
                         sleep_limit += 1
-                        sleep_limit = max(sleep_max, sleep_limit)
+                        sleep_limit = min(sleep_max, sleep_limit)
 
             if sci_succ:
                 return {

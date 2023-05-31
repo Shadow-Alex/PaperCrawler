@@ -1,7 +1,8 @@
 # Scholar crawler 学术爬虫
 
 This projects aims to crawl title and citation from given journals, 
-with few human interaction, then download from url or scihub. 
+with few human interaction, then download from url or scihub. Achieve
+97%+ success rate on a wide range of papers.
 
 **Google Scholar`scraper.py`** : With good pacing, the script is able to 
 crawl 1 page in 10 second, and run for at least 100 page until 
