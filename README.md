@@ -4,13 +4,13 @@ This projects aims to crawl title and citation from given journals,
 with few human interaction, then download from url or scihub. Achieve
 97%+ success rate on a wide range of papers.
 
+Current : v2.0, add recaptcha solver.
+
 **Google Scholar`scraper.py`** : With good pacing, the script is able to 
 crawl 1 page in 10 second, and run for at least 100 page until 
-it hit a bot check. This project **don't** solve the bot check
-however stop and wait for human assistance. (Note there are some paid 
-solution for reCAPTCHA) So it's not for you if you want to crawl
-for a data lake.
-![img.png](img.png)
+it hit a bot check. This project solve the bot check uses [recaptcha-challenger](https://github.com/QIN2DIM/recaptcha-challenger)
+, with a openai whisper model. You can always fallback to manual
+human check with `scraper_manual.py`
 
 **Scihub`Downloader.py`** :  Try to download the links 
 scrapped from google scholar. If failed, it will fallback to 
@@ -22,4 +22,3 @@ add at least 5 mirrors for load balancing.
 
 **Clash `clash.py`**: Change proxy server before google gets
 irritated. TBD
-

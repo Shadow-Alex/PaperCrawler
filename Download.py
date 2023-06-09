@@ -2,7 +2,6 @@ import re
 import hashlib
 import logging
 import os
-import requests
 import urllib3
 import pickle
 from time import sleep
@@ -19,23 +18,13 @@ logger = logging.getLogger('Sci-Hub')
 logger.setLevel(logging.DEBUG)
 urllib3.disable_warnings()
 
-# constants
-SCHOLARS_BASE_URL = 'https://scholar.google.com/scholar'
-HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:27.0) Gecko/20100101 Firefox/27.0'}
-
-
 class SciHub(object):
     def __init__(self):
-        self.sess = requests.Session()
-        self.sess.headers = HEADERS
         self.available_base_url_list = self._get_available_scihub_urls()
         self.available_backbone_url_list = self._get_available_scihub_backbone_urls()
         self.cycle_iter = itertools.cycle(self.available_base_url_list)
         self.cycle_bb = itertools.cycle(self.available_backbone_url_list)
         self.base_url = self.available_base_url_list[0] + '/'
-        self.sess.proxies = {
-            "http": 'http://127.0.0.1:7890',
-            "https": 'https://127.0.0.1:7890', }
 
         # init a selenium driver :)
         chrome_driver_path = 'chromedriver.exe'
@@ -73,11 +62,9 @@ class SciHub(object):
 
     def _change_base_url(self):
         self.base_url = next(self.cycle_iter)
-        # logger.info("I'm changing to {}".format(self.base_url))
 
     def _change_backbone_url(self):
         self.base_url = next(self.cycle_bb)
-        # logger.info("I'm changing to {}".format(self.base_url))
 
     def download(self, identifier, destination='', path=None):
         # load balancing.
@@ -235,11 +222,11 @@ if __name__ == '__main__':
 
     while True:
         # find for *.pickle
-        if os.path.exists(str(file_idx) + '.pickle'):
+        if os.path.exists(os.path.join('infos', str(file_idx) + '.pickle')):
             success_cnt = 0
 
-            print("Downloading papers in " + str(file_idx) + '.pickle...')
-            with open(str(file_idx) + '.pickle', "rb") as file:
+            print("Downloading papers in " + os.path.join('infos', str(file_idx) + '.pickle'))
+            with open(os.path.join('infos', str(file_idx) + '.pickle'), "rb") as file:
                 papers_info = pickle.load(file)
             while paper_idx < len(papers_info):
                 sleep(2)
@@ -257,7 +244,7 @@ if __name__ == '__main__':
                         success = True
                         papers_info[paper_idx]['filename'] = result['name']
 
-                        with open(str(file_idx) + '.pickle', "wb") as file:
+                        with open(os.path.join('infos', str(file_idx) + '.pickle'), "wb") as file:
                             pickle.dump(papers_info, file)
                         with open("download_log", 'w') as file:
                             file.write(str(file_idx) + '\n')
@@ -277,7 +264,7 @@ if __name__ == '__main__':
                         success = True
                         papers_info[paper_idx]['filename'] = result['name']
 
-                        with open(str(file_idx) + '.pickle', "wb") as file:
+                        with open(os.path.join('infos', str(file_idx) + '.pickle'), "wb") as file:
                             pickle.dump(papers_info, file)
                         with open("download_log", 'w') as file:
                             file.write(str(file_idx) + '\n')
