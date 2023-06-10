@@ -11,6 +11,7 @@ crawl 1 page in 10 second, and run for at least 100 page until
 it hit a bot check. This project solve the bot check uses [recaptcha-challenger](https://github.com/QIN2DIM/recaptcha-challenger)
 , with a openai whisper model. You can always fallback to manual
 human check with `scraper_manual.py`
+![img.png](img.png)
 
 **Scihub`Downloader.py`** :  Try to download the links 
 scrapped from google scholar. If failed, it will fallback to 

@@ -148,7 +148,7 @@ if __name__ == '__main__':
                     continue
 
                 page.goto("https://scholar.google.com")
-                sleep(3)
+                sleep(5)
 
                 if check_for_bot(page):
                     fuck_reCAPTCHA(page)
@@ -158,7 +158,7 @@ if __name__ == '__main__':
                 search_box.fill(build_keys(journal))
                 sleep(randint(0, 1))
                 search_box.press('Enter')
-                sleep(3)
+                sleep(5)
                 random_user_action(page)
 
                 if check_for_bot(page):
@@ -169,7 +169,7 @@ if __name__ == '__main__':
                 exclude_citation = sidebar.query_selector_all('.gs_lbl')
                 move_to_element(exclude_citation[2])
                 exclude_citation[2].click()
-                sleep(3)
+                sleep(5)
 
                 if check_for_bot(page):
                     fuck_reCAPTCHA(page)
@@ -189,13 +189,13 @@ if __name__ == '__main__':
                 search_btn = sidebar.wait_for_selector('.gs_btn_lsb')
                 move_to_element(search_btn)
                 search_btn.click()
-                sleep(3)
+                sleep(5)
 
                 if check_for_bot(page):
                     fuck_reCAPTCHA(page)
 
                 while True:
-                    sleep(3)
+                    sleep(5)
                     if check_for_bot(page):
                         fuck_reCAPTCHA(page)
 
