@@ -269,11 +269,23 @@ if __name__ == '__main__':
                             print("Year " + str(cur_year) + " of " + journal + "is completed.")
                             with open("log", "w") as file:
                                 file.writelines([journal, str(cur_year)])
+                            # flush.
+                            with open(os.path.join('infos', str(file_idx) + '.pickle'), 'wb') as file:
+                                pickle.dump(paper_store, file)
+
+                            paper_store = []
+                            file_idx += 1
                             break
                     except:
                         print("Year " + str(cur_year) + " of " + journal + "is completed.")
                         with open("log", "w") as file:
                             file.writelines([journal, str(cur_year)])
+                        # flush.
+                        with open(os.path.join('infos', str(file_idx) + '.pickle'), 'wb') as file:
+                            pickle.dump(paper_store, file)
+
+                        paper_store = []
+                        file_idx += 1
                         break
 
                 cur_year += 1
